@@ -31,12 +31,13 @@ public class JacksonObjectMapper extends ObjectMapper {
 
     public JacksonObjectMapper() {
         super();
-        //收到未知属性时不报异常
+        //收到未知属性时不报异常  给@RequestBody用的  DateTimeLocal: 2025/01/03  自动忽略
         this.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         //反序列化时，属性不存在的兼容处理
         this.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
+        //注意 这里是报文的格式问题  LocalDateTime: 2025/01/03  报错 格式不对
         SimpleModule simpleModule = new SimpleModule()
                 .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT)))
                 .addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT)))
