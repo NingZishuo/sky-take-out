@@ -35,6 +35,9 @@
             <if test="idNumber!=null and idNumber!=''">
                 id_number = #{idNumber},
             </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
             <if test="password!=null and password!=''">
                 password = #{password},
             </if>
