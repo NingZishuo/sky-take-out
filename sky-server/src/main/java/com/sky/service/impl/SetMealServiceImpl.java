@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 public class SetMealServiceImpl implements SetMealService {
 
     @Autowired
-    SetMealMapper setMealMapper;
+    private SetMealMapper setMealMapper;
 
     @Autowired
-    DishMapper dishMapper;
+    private DishMapper dishMapper;
 
     /**
      * 添加套餐

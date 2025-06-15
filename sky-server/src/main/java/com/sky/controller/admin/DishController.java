@@ -1,8 +1,10 @@
 package com.sky.controller.admin;
 
-import com.sky.dto.SetmealDTO;
+
+import com.sky.dto.DishDTO;
+import com.sky.entity.Dish;
 import com.sky.result.Result;
-import com.sky.service.SetMealService;
+import com.sky.service.DishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,27 +13,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 套餐管理
+ * 菜品管理
  */
 @RestController
-@RequestMapping("/admin/setmeal")
+@RequestMapping("/admin/dish")
 @Slf4j
-public class SetMealController {
+public class DishController {
 
     @Autowired
-    private SetMealService setMealService;
+    private DishService dishService;
 
     /**
-     * 添加套餐
-     * @param setmealDTO
+     * 新增菜品
+     * @param dishDTO
      * @return
      */
     @PostMapping("")
-    public Result<String> addSetMeal(@RequestBody SetmealDTO setmealDTO) {
-        log.info("添加套餐：{}", setmealDTO);
-        setMealService.addSetMeal(setmealDTO);
+    public Result<String> addDish(@RequestBody DishDTO dishDTO) {
+        log.info("新增菜品:{}", dishDTO);
+        dishService.addDishWithFlavor(dishDTO);
         return Result.success();
     }
-
-
 }
