@@ -1,33 +1,52 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
 import com.sky.annotation.AutoFill;
-import com.sky.dto.CategoryPageQueryDTO;
-import com.sky.entity.Category;
+import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
 import com.sky.enumeration.OperationType;
-import org.apache.ibatis.annotations.Insert;
+import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface DishMapper {
 
 
+
     /**
-     * 根据category的id 查询有没有哪个dish被包含到套餐里
-     * @param id
+     * 根据ids的status  查询到底有几个在售卖中
+     * @param ids
      * @return
      */
-    @Select("select count(*) from setmeal_dish where dish_id = #{id}")
-    Integer countByCategoryId(long id);
-
+    @Select("select count(*) from dish where id in (${ids}) and status = 1 ")
+    Integer getStatusById(String ids);
     /**
      * 添加菜品
      * @param dish
      */
     @AutoFill(operationType = OperationType.INSERT)
     void insertDish(Dish dish);
+
+
+    /**
+     * 分页查询
+     * @param dishPageQueryDTO
+     * @return
+     */
+    Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    @Select("select * from dish where category_id = #{categoryId}")
+    List<Dish> selectDishesByCategoryId(Integer categoryId);
+
+    DishVO selectDishById(Integer id);
+
+    void deleteByIds(String ids);
+
+    @AutoFill(operationType = OperationType.UPDATE)
+    void update(Dish dish);
 
 
 

@@ -25,12 +25,7 @@ public interface SetMealMapper {
     @AutoFill(operationType = OperationType.INSERT)
     void addSetMealDish(SetmealDish setmealDish);
 
-    /**
-     * 根据category的id 查询到底某个套餐有没有dish
-     * @param id
-     * @return
-     */
-    @Select("select count(*) from setmeal_dish where setmeal_id = #{id}")
-    Integer countByCategoryId(long id);
+
+
 
 }

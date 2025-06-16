@@ -10,15 +10,13 @@ import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
 import com.sky.entity.Employee;
 import com.sky.exception.DeletionNotAllowedException;
-import com.sky.mapper.CategoryMapper;
-import com.sky.mapper.DishMapper;
-import com.sky.mapper.EmployeeMapper;
-import com.sky.mapper.SetMealMapper;
+import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,6 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private SetMealMapper setMealMapper;
+
+    @Autowired
+    private SetMealDishMapper setMealDishMapper;
 
 
     /**
@@ -74,22 +75,27 @@ public class CategoryServiceImpl implements CategoryService {
      * 根据id删除分类
      * @param id
      */
+    @Transactional
     @Override
+    //TODO 这部分逻辑有问题 等套餐管理实现后必须修改
     public void deleteById(long id) {
         //查询当前分类是否关联了菜品，如果关联了就抛出业务异常
-        Integer count = dishMapper.countByCategoryId(id);
+        Integer count = setMealDishMapper.countDishByCategoryId(id);
         if(count > 0){
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_DISH);
         }
 
         //查询当前分类是否关联了套餐，如果关联了就抛出业务异常
-        count = setMealMapper.countByCategoryId(id);
+        count = setMealDishMapper.countSetMealByCategoryId(id);
         if(count > 0){
             throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         }
 
         //删除分类数据
         categoryMapper.deleteById(id);
+        //删除对应setmeal
+
+        //删除对应dish
     }
 
     /**

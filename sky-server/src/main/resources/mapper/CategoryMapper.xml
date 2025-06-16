@@ -9,7 +9,7 @@
         select * from category
         <where>
             <if test="name!=null and name!=''">
-                name = #{name}
+                name like "%"#{name}"%"
             </if>
             <if test="type!=null">
                 and type = #{type}
@@ -50,5 +50,16 @@
         </if>
         order by sort asc,create_time desc
     </select>
+
+    <!--String[] selectNamesByIds(List<Long> dishCategoryIds)-->
+    <select id="selectNamesByIds" resultType="string">
+        SELECT * FROM category
+        WHERE id IN
+        <foreach collection="dishCategoryIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
 
 </mapper>

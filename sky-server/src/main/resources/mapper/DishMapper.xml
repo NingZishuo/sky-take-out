@@ -4,7 +4,82 @@
 <mapper namespace="com.sky.mapper.DishMapper">
 
     <insert id="insertDish" useGeneratedKeys="true" keyProperty="id">
-        insert into dish (name, category_id, price, image, description, status, create_time, update_time, create_user, update_user) values
-            (#{name},#{categoryId},#{price},#{image},#{description},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})
+        insert into dish (name, category_id, price, image, description, status, create_time, update_time, create_user,
+                          update_user)
+        values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime}, #{updateTime},
+                #{createUser}, #{updateUser})
     </insert>
+
+    <!-- 不推荐异步查询太浪费性能-->
+    <resultMap id="DishVO" type="com.sky.vo.DishVO">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="category_id" property="categoryId"></result>
+        <result column="price" property="price"></result>
+        <result column="image" property="image"></result>
+        <result column="description" property="description"></result>
+        <result column="status" property="status"></result>
+        <result column="update_time" property="updateTime"></result>
+        <association property="categoryName"
+                     select="com.sky.mapper.CategoryMapper.selectNameId" column="category_id">
+        </association>
+        <collection property="flavors"
+                    select="com.sky.mapper.DishFlavorMapper.selectFlavorsByDishId" column="id">
+        </collection>
+    </resultMap>
+
+    <!--Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);-->
+    <select id="pageQuery" resultMap="DishVO">
+        SELECT * FROM dish
+        <where>
+            <if test="name!=null and name != ''">
+                dish.name like concat('%', #{name}, '%')
+            </if>
+            <if test="categoryId!=null">
+                dish.category_id = #{categoryId}
+            </if>
+            <if test="status!=null">
+                dish.status = #{status}
+            </if>
+        </where>
+    </select>
+
+
+    <!--DishVO selectDishById(Integer id);-->
+    <select id="selectDishById" resultMap="DishVO">
+        SELECT * FROM dish where id = #{id}
+    </select>
+
+    <!--void deleteByIds(String ids);-->
+    <delete id="deleteByIds">
+        delete from dish where id in (${ids})
+    </delete>
+
+    <!--void update(DishDTO dishDTO);-->
+    <update id="update">
+        update dish
+        <set>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="categoryId!=null">
+                category_id = #{categoryId},
+            </if>
+            <if test="price!=null">
+                price = #{price},
+            </if>
+            <if test="image!=null and image!=''">
+                image = #{image},
+            </if>
+            <if test="description!=null and description!=''">
+                description = #{description},
+            </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
+            update_time = #{updateTime},
+            update_user = #{updateUser}
+        </set>
+        where id = #{id}
+    </update>
 </mapper>
