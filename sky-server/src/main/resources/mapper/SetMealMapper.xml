@@ -3,8 +3,86 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetMealMapper">
 
-
-    <insert id="add">
-
+    <!--void addSetMeal(Setmeal setmeal);-->
+    <insert id="addSetMeal" useGeneratedKeys="true" keyProperty="id">
+        insert into setmeal (category_id, name, price, status, description, image, create_time, update_time,
+                             create_user, update_user)
+        values (#{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime}, #{updateTime},
+                #{createUser}, #{updateUser})
     </insert>
+
+    <!--void update(Setmeal setmeal);-->
+    <update id="update">
+        update setmeal
+        <set>
+            <if test="categoryId !=null">
+                 category_id = #{categoryId},
+            </if>
+            <if test="name !=null and name!= ''">
+                name = #{name},
+            </if>
+            <if test="price !=null">
+                price = #{price},
+            </if>
+            <if test="status !=null">
+                status = #{status},
+            </if>
+            <if test="description !=null and description!=''">
+                description = #{description},
+            </if>
+            <if test="image !=null and image!=''">
+                image = #{image},
+            </if>
+            update_time = #{updateTime},
+            update_user = #{updateUser}
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--Page<SetmealVO> pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);-->
+    <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
+        select * from setmeal
+        <where>
+            <if test="name!=null and name!=''">
+                name = #{name}
+            </if>
+            <if test="categoryId!=null">
+                category_id = #{categoryId}
+            </if>
+            <if test="status!=null">
+                status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!--int getStatusById(List<Long> ids,int status);-->
+    <select id="getStatusById" resultType="java.lang.Integer">
+        select count(*) from setmeal
+        <where>
+            id in
+            <foreach collection="ids" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!--void deleteByids(List<Long> ids);-->
+    <delete id="deleteByids">
+        delete from setmeal
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach collection="ids" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="ids == null or ids.size() == 0">
+                1 = 0
+            </if>
+        </where>
+    </delete>
 </mapper>

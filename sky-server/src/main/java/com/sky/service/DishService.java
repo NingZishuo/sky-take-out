@@ -44,7 +44,7 @@ public interface DishService {
      * @param ids
      * @return
      */
-    void deleteByIds(String ids);
+    void deleteByIds(List<Long> ids);
 
     /**
      * 修改菜品

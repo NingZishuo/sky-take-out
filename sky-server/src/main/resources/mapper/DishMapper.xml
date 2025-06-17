@@ -42,6 +42,7 @@
                 dish.status = #{status}
             </if>
         </where>
+        order by create_time desc
     </select>
 
 
@@ -50,9 +51,34 @@
         SELECT * FROM dish where id = #{id}
     </select>
 
+    <!--Integer getStatusById(List<Long>ids , int status);-->
+    <select id="getStatusById" resultType="java.lang.Integer">
+        select count(*) from dish
+        <where>
+            id in
+            <foreach collection="ids" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+            <if test="status!=null">
+                and status =#{status}
+            </if>
+        </where>
+    </select>
+
     <!--void deleteByIds(String ids);-->
     <delete id="deleteByIds">
-        delete from dish where id in (${ids})
+        delete from dish
+        <where>
+            id in
+            <if test="ids != null and ids.size() != 0">
+                <foreach collection="ids" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="ids == null or ids.size() == 0">
+                1 = 0
+            </if>
+        </where>
     </delete>
 
     <!--void update(DishDTO dishDTO);-->

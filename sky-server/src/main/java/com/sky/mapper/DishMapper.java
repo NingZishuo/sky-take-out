@@ -21,8 +21,7 @@ public interface DishMapper {
      * @param ids
      * @return
      */
-    @Select("select count(*) from dish where id in (${ids}) and status = 1 ")
-    Integer getStatusById(String ids);
+    Integer getStatusById(List<Long>ids , int status);
     /**
      * 添加菜品
      * @param dish
@@ -43,7 +42,7 @@ public interface DishMapper {
 
     DishVO selectDishById(Integer id);
 
-    void deleteByIds(String ids);
+    void deleteByIds(List<Long> ids);
 
     @AutoFill(operationType = OperationType.UPDATE)
     void update(Dish dish);

@@ -3,8 +3,57 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetMealDishMapper">
 
-
-    <insert id="add">
-
+   <!-- void addSetMealDish(List<SetmealDish> setmealDishes, Long id);-->
+    <insert id="addSetMealDish">
+        insert into setmeal_dish (setmeal_id, dish_id, name, price, copies) values
+        <foreach collection="setmealDishes" item="setmealDish" separator=",">
+            (#{id},#{setmealDish.dishId},#{setmealDish.name},#{setmealDish.price},#{setmealDish.copies})
+        </foreach>
     </insert>
+
+    <!--List<SetmealDish> selectBySetMealId(long setMealId);-->
+    <select id="selectBySetMealId" resultType="com.sky.entity.SetmealDish">
+        select * from setmeal_dish where setmeal_id = #{setMealId}
+    </select>
+
+    <!--List<SetmealDish> selectBySetDishId(long dishId);-->
+    <select id="selectBySetDishId" resultType="com.sky.entity.SetmealDish">
+        select * from setmeal_dish where dish_id = #{dishId}
+    </select>
+
+    <!--List<SetmealDish> selectBatchBySetMealIds(List<Long> setMealIds);-->
+    <select id="selectBatchBySetMealIds" resultType="com.sky.entity.SetmealDish">
+        SELECT * FROM setmeal_dish
+        WHERE id IN
+        <foreach collection="setMealIds" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <!--Integer countByDishIds(List<Long> ids);-->
+    <select id="countByDishIds" resultType="java.lang.Integer">
+        select count(*) from setmeal_dish
+        <where>
+            dish_id in
+            <foreach collection="ids" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
+    <!--void deleteBySetMealIds(List<Long> setMealIds);-->
+    <delete id="deleteBySetMealIds">
+        delete from setmeal_dish
+        <where>
+            setmeal_id in
+            <if test="setMealIds != null and setMealIds.size() != 0">
+                <foreach collection="setMealIds" item="setMealId" separator="," open="(" close=")">
+                    #{setMealId}
+                </foreach>
+            </if>
+            <if test="setMealIds == null or setMealIds.size() == 0">
+                1 = 0
+            </if>
+        </where>
+    </delete>
 </mapper>

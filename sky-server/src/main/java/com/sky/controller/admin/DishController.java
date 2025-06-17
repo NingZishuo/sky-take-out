@@ -80,8 +80,7 @@ public class DishController {
      * @return
      */
     @DeleteMapping("")
-    //使用@RequestParam List<long> ids 居然也能直接接收字符串并自动转换
-    public Result<String> deleteDishes(@RequestParam String ids) {
+    public Result<String> deleteDishes(@RequestParam List<Long> ids) {
         log.info("据ids批量删除菜品:{}",ids);
         dishService.deleteByIds(ids);
         return Result.success();
