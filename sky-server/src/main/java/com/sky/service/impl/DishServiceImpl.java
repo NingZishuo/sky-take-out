@@ -6,10 +6,7 @@ import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Dish;
-import com.sky.entity.DishFlavor;
-import com.sky.entity.Setmeal;
-import com.sky.entity.SetmealDish;
+import com.sky.entity.*;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.*;
@@ -18,8 +15,10 @@ import com.sky.service.DishService;
 import com.sky.service.SetMealService;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +40,8 @@ public class DishServiceImpl implements DishService {
     private CategoryMapper categoryMapper;
     @Autowired
     private SetMealMapper setMealMapper;
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
 
     /**
      * 新增菜品和其风味
@@ -51,6 +52,7 @@ public class DishServiceImpl implements DishService {
     @Transactional
     @Override
     public void addDishWithFlavor(DishDTO dishDTO) {
+        cleanRedis("dish_"+dishDTO.getCategoryId());
         //显然 菜品和风味要分开插入
         //添加菜品
         Dish dish = new Dish();
@@ -92,14 +94,49 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
+     * 根据categoryId查询菜品以及其风味
+     *
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<DishVO> selectDishVOSByCategoryId(Long categoryId) {
+        //获取dishVO  但是缺少categoryName和Flavor
+        List<DishVO> dishVOList = dishMapper.selectDishVOListByCategoryId(categoryId);
+        if (dishVOList != null && !dishVOList.isEmpty()) {
+            //获取categoryName
+            String categoryName = categoryMapper.selectNameId(categoryId);
+            //获取所有dishIds
+            List<Long> dishIds = dishVOList.stream().map(DishVO::getId).collect(Collectors.toList());
+            //给根据dishIds批量获取dishFlavors
+            List<DishFlavor> dishFlavors = dishFlavorMapper.selectFlavorsByDishId(dishIds);
+            if (dishFlavors != null && !dishFlavors.isEmpty()) {
+                //用DishId作为key 分类整个流
+                Map<Long, List<DishFlavor>> map = dishFlavors.stream().collect(Collectors.groupingBy(DishFlavor::getDishId));
+
+                dishVOList = dishVOList.stream()
+                        .peek(dishVO -> {
+                            dishVO.setCategoryName(categoryName);
+                            dishVO.setFlavors(map.get(dishVO.getId()));
+                        })
+                        .collect(Collectors.toList());
+            }
+        }
+
+        return dishVOList;
+    }
+
+    /**
      * 根据id查询菜品
      *
      * @param id
      * @return
      */
     @Override
-    public DishVO selectDishById(Integer id) {
+    public DishVO selectDishById(Long id) {
         DishVO dishVO = dishMapper.selectDishById(id);
+        List<DishFlavor> flavors = dishFlavorMapper.selectFlavorsByDishId(Collections.singletonList(id));
+        dishVO.setFlavors(flavors);
         return dishVO;
     }
 
@@ -112,6 +149,7 @@ public class DishServiceImpl implements DishService {
     @Transactional
     @Override
     public void deleteByIds(List<Long> ids) {
+        cleanRedis("dish_*");
         //通过DishIds 查询是否有套餐和dish关联
         Integer count = setMealDishMapper.countByDishIds(ids);
         if (count > 0) {
@@ -137,6 +175,7 @@ public class DishServiceImpl implements DishService {
     @Transactional
     @Override
     public void updateDish(@RequestBody DishDTO dishDTO) {
+        cleanRedis("dish_*");
         Dish dish = new Dish();
         BeanUtils.copyProperties(dishDTO, dish);
         dishMapper.update(dish);
@@ -158,6 +197,7 @@ public class DishServiceImpl implements DishService {
      */
     @Override
     public void updateStatus(Integer status, Long id) {
+        cleanRedis("dish_*");
         Dish dish = Dish.builder().
                 id(id).
                 status(status).
@@ -175,5 +215,13 @@ public class DishServiceImpl implements DishService {
                         build());
             }
         }
+    }
+
+    /**
+     * 暴力清楚redis缓存数据
+     */
+    private void cleanRedis(String pattern) {
+        Set<String> keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
     }
 }

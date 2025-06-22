@@ -57,4 +57,11 @@ public interface SetMealMapper {
      */
     @AutoFill(operationType = OperationType.UPDATE)
     void update(Setmeal setmeal);
+
+    /**
+     * 综合查询套餐
+     * @param setmeal
+     * @return
+     */
+    List<Setmeal> selectByConditon(Setmeal setmeal);
 }

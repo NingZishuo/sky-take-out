@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 分类管理
  */
-@RestController
+@RestController("adminCategoryController")
 @RequestMapping("/admin/category")
 @Slf4j
 public class CategoryController {
@@ -100,8 +100,8 @@ public class CategoryController {
      * @return
      */
     @GetMapping("/list")
-    public Result<List<Category>> getCategoryByType(@RequestParam long type) {
-        log.info("删除分类:{}",type);
+    public Result<List<Category>> getCategoryByType(@RequestParam Integer type) {
+        log.info("根据type获得分类:{}",type);
         List<Category> categories = categoryService.getCategoryByType(type);
         return Result.success(categories);
     }

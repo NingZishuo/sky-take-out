@@ -23,9 +23,6 @@
         <association property="categoryName"
                      select="com.sky.mapper.CategoryMapper.selectNameId" column="category_id">
         </association>
-        <collection property="flavors"
-                    select="com.sky.mapper.DishFlavorMapper.selectFlavorsByDishId" column="id">
-        </collection>
     </resultMap>
 
     <!--Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);-->
@@ -36,17 +33,17 @@
                 dish.name like concat('%', #{name}, '%')
             </if>
             <if test="categoryId!=null">
-                dish.category_id = #{categoryId}
+                and dish.category_id = #{categoryId}
             </if>
             <if test="status!=null">
-                dish.status = #{status}
+                and dish.status = #{status}
             </if>
         </where>
         order by create_time desc
     </select>
 
 
-    <!--DishVO selectDishById(Integer id);-->
+    <!--DishVO selectDishById(Long id);-->
     <select id="selectDishById" resultMap="DishVO">
         SELECT * FROM dish where id = #{id}
     </select>

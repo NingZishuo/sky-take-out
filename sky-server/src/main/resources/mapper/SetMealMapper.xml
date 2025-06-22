@@ -47,10 +47,10 @@
                 name = #{name}
             </if>
             <if test="categoryId!=null">
-                category_id = #{categoryId}
+                and category_id = #{categoryId}
             </if>
             <if test="status!=null">
-                status = #{status}
+                and status = #{status}
             </if>
         </where>
         order by create_time desc
@@ -65,6 +65,25 @@
                 #{id}
             </foreach>
             <if test="status!=null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!--List<Setmeal> selectByConditon(Setmeal setmeal);-->
+    <select id="selectByConditon" resultType="com.sky.entity.Setmeal">
+        select * from setmeal
+        <where>
+            <if test="id !=null">
+                id = #{id}
+            </if>
+            <if test="categoryId !=null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="name !=null">
+                and name = #{name}
+            </if>
+            <if test="status !=null">
                 and status = #{status}
             </if>
         </where>

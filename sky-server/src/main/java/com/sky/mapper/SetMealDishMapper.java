@@ -2,6 +2,7 @@ package com.sky.mapper;
 
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.vo.DishItemVO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -71,5 +72,9 @@ public interface SetMealDishMapper {
     void deleteBySetMealIds(List<Long> setMealIds);
 
 
-
+    @Select("SELECT * FROM setmeal_dish " +
+            "LEFT OUTER JOIN dish " +
+            "ON setmeal_dish.dish_id = dish.id " +
+            "WHERE setmeal_id = #{setMealid}")
+    List<DishItemVO> selectDishItemVOBySetDishId(Long setMealid);
 }

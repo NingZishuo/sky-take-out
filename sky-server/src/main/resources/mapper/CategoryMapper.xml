@@ -42,6 +42,7 @@
         where id = #{id}
     </update>
 
+   <!-- List<Category> getCategoryByType(@Param("type") Integer type);-->
     <select id="getCategoryByType" resultType="category">
         select * from category
         where status = 1

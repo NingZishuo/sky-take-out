@@ -37,7 +37,7 @@ public interface DishService {
      * @param id
      * @return
      */
-    DishVO selectDishById(Integer id);
+    DishVO selectDishById(Long id);
 
     /**
      * 根据ids批量删除菜品
@@ -60,4 +60,11 @@ public interface DishService {
      * @return
      */
     void updateStatus(Integer status, Long id);
+
+    /**
+     * 根据categoryId查询菜品以及其风味
+     * @param categoryId
+     * @return
+     */
+    List<DishVO> selectDishVOSByCategoryId(Long categoryId);
 }

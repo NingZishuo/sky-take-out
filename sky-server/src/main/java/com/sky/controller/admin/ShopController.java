@@ -7,12 +7,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * 店铺状态管理
+ * 用户端店铺状态管理
  */
-@RestController
+@RestController("adminShopController")
 @RequestMapping("/admin/shop")
 @Slf4j
 public class ShopController {
+
+    public static final String SHOP_STATUS = "SHOP_STATUS";
+
     @Autowired
     private RedisTemplate<String,Object> redisTemplate;
 
@@ -23,12 +26,11 @@ public class ShopController {
      * @return
      */
     @PutMapping("/{status}")
-    public Result<String> setStatus(@PathVariable String status) {
+    public Result<String> setStatus(@PathVariable Integer status) {
         log.info("设置营业状态:{}",status);
-        redisTemplate.opsForValue().set("SHOP_STATUS",status);
+        redisTemplate.opsForValue().set(SHOP_STATUS,status);
         return Result.success();
     }
-
 
     /**
      * 获取营业状态
@@ -36,10 +38,9 @@ public class ShopController {
      */
     @GetMapping("/status")
     public Result<Integer> getStatus() {
-        Integer status = (Integer)redisTemplate.opsForValue().get("SHOP_STATUS");
+        Integer status = (Integer) redisTemplate.opsForValue().get(SHOP_STATUS);
         log.info("查询营业状态:{}",status);
         return Result.success(status);
     }
-
 
 }

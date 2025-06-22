@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 菜品管理
  */
-@RestController
+@RestController("adminDishController")
 @RequestMapping("/admin/dish")
 @Slf4j
 public class DishController {
@@ -68,7 +68,7 @@ public class DishController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result<DishVO> selectDishById(@PathVariable Integer id) {
+    public Result<DishVO> selectDishById(@PathVariable Long id) {
         log.info("根据id查询菜品:{}",id);
         DishVO dishVO = dishService.selectDishById(id);
         return Result.success(dishVO);

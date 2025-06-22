@@ -14,8 +14,6 @@ import java.util.List;
 @Mapper
 public interface DishMapper {
 
-
-
     /**
      * 根据ids的status  查询到底有几个在售卖中
      * @param ids
@@ -40,13 +38,13 @@ public interface DishMapper {
     @Select("select * from dish where category_id = #{categoryId}")
     List<Dish> selectDishesByCategoryId(Integer categoryId);
 
-    DishVO selectDishById(Integer id);
+    DishVO selectDishById(Long id);
 
     void deleteByIds(List<Long> ids);
 
     @AutoFill(operationType = OperationType.UPDATE)
     void update(Dish dish);
 
-
-
+    @Select("select * from dish where category_id = #{categoryId}")
+    List<DishVO> selectDishVOListByCategoryId(Long categoryId);
 }
