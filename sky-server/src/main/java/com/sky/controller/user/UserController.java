@@ -59,7 +59,6 @@ public class UserController {
                 jwtProperties.getUserSecretKey(),
                 jwtProperties.getUserTtl(),
                 claims);
-
         UserLoginVO userLoginVO = UserLoginVO.builder().
                 id(user.getId()).
                 openid(user.getOpenid()).

@@ -34,5 +34,11 @@ public interface ShoppingCartMapper {
      * @param shoppingCart
      */
     void deleteByConditions(ShoppingCart shoppingCart);
+
+    /**
+     * 批量插入
+     * @param shoppingCartList
+     */
+    void Batchinsert(List<ShoppingCart> shoppingCartList);
 }
 
