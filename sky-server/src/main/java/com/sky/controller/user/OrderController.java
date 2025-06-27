@@ -76,7 +76,7 @@ public class OrderController {
      */
     @GetMapping("/orderDetail/{id}")
     public Result<OrderVO> orderDetail(@PathVariable Long id) {
-        log.info("订单详情查询{}", id);
+        log.info("订单详情查询:{}", id);
         OrderVO orderVO = orderService.orderDetail(id);
         return Result.success(orderVO);
     }
@@ -104,6 +104,17 @@ public class OrderController {
     public Result<String> repetition(@PathVariable Long id) {
         log.info("再来一单{}", id);
         orderService.repetition(id);
+        return Result.success();
+    }
+
+    /**
+     * 催单
+     * @return
+     */
+    @GetMapping("/reminder/{id}")
+    public Result<String> reminder(@PathVariable Long id) {
+        log.info("催单:{}", id);
+        orderService.reminder(id);
         return Result.success();
     }
 

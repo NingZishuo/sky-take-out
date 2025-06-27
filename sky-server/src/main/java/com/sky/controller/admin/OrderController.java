@@ -92,7 +92,7 @@ public class OrderController {
      */
     @PutMapping("/confirm")
     public Result<String> orderConfirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
-        log.info("派送:{}", ordersConfirmDTO);
+        log.info("接单:{}", ordersConfirmDTO);
         orderService.orderConfirm(ordersConfirmDTO);
         return Result.success();
     }
